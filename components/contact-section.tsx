@@ -1,14 +1,20 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, MapPin, Clock } from "lucide-react"
-import { toast } from "@/hooks/use-toast"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const contactInfo = [
   {
@@ -36,20 +42,20 @@ const contactInfo = [
     details: "Mon-Sat: 9am-7pm",
     description: "Sunday: Closed",
   },
-]
+];
 
 export default function ContactSection() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     company: "",
     message: "",
-  })
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/contact", {
@@ -62,44 +68,49 @@ export default function ContactSection() {
           email: formData.email,
           phone: "", // Not collected in this form
           subject: `Inquiry from ${formData.company || "Website"}`,
-          message: `Company: ${formData.company || "Not specified"}\n\nMessage:\n${formData.message}`,
+          message: `Company: ${
+            formData.company || "Not specified"
+          }\n\nMessage:\n${formData.message}`,
         }),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
         toast({
           title: "Message Sent!",
           description: result.message,
-        })
+        });
         // Reset form
         setFormData({
           name: "",
           email: "",
           company: "",
           message: "",
-        })
+        });
       } else {
-        throw new Error(result.message)
+        throw new Error(result.message);
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again or call us directly.",
+        description:
+          "Failed to send message. Please try again or call us directly.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }))
-  }
+    }));
+  };
 
   return (
     <section id="contact" className="py-20">
@@ -109,8 +120,8 @@ export default function ContactSection() {
             Get In <span className="text-blue-600">Touch</span>
           </h2>
           <p className="text-xl text-muted-foreground text-pretty max-w-3xl mx-auto leading-relaxed">
-            Ready to start your career journey? We'd love to hear from you. Send us a message and we'll respond as soon
-            as possible.
+            Ready to start your career journey? We'd love to hear from you. Send
+            us a message and we'll respond as soon as possible.
           </p>
         </div>
 
@@ -118,7 +129,9 @@ export default function ContactSection() {
           {/* Contact Information */}
           <div className="space-y-8">
             <div>
-              <h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
+              <h3 className="text-2xl font-semibold mb-6">
+                Contact Information
+              </h3>
               <div className="space-y-6">
                 {contactInfo.map((info, index) => (
                   <div key={index} className="flex items-start gap-4">
@@ -127,8 +140,12 @@ export default function ContactSection() {
                     </div>
                     <div className="space-y-1">
                       <h4 className="font-semibold">{info.title}</h4>
-                      <p className="text-foreground font-medium">{info.details}</p>
-                      <p className="text-sm text-muted-foreground">{info.description}</p>
+                      <p className="text-foreground font-medium">
+                        {info.details}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {info.description}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -154,11 +171,14 @@ export default function ContactSection() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-2xl">Send us a message</CardTitle>
-                <CardDescription>Fill out the form below and we'll get back to you within 24 hours.</CardDescription>
+                <CardDescription>
+                  Fill out the form below and we'll get back to you within 24
+                  hours.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className=" gap-4">
                     <div className="space-y-2">
                       <label htmlFor="name" className="text-sm font-medium">
                         Full Name *
@@ -172,23 +192,23 @@ export default function ContactSection() {
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label htmlFor="email" className="text-sm font-medium">
-                        Email Address *
-                      </label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="your.email@example.com"
-                        required
-                      />
-                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium">
+                      Email Address *
+                    </label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="your.email@example.com"
+                      required
+                    />
                   </div>
 
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <label htmlFor="company" className="text-sm font-medium">
                       Company Name
                     </label>
@@ -199,7 +219,7 @@ export default function ContactSection() {
                       onChange={handleChange}
                       placeholder="Your company name"
                     />
-                  </div>
+                  </div> */}
 
                   <div className="space-y-2">
                     <label htmlFor="message" className="text-sm font-medium">
@@ -231,5 +251,5 @@ export default function ContactSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -68,68 +68,40 @@ export function JobApplicationModal({
     e.preventDefault();
     setIsSubmitting(true);
 
+    const formDataObj = new FormData();
+    formDataObj.append("name", formData.name);
+    formDataObj.append("email", formData.email);
+    formDataObj.append("phone", formData.phone);
+    formDataObj.append("experience", formData.experience);
+    formDataObj.append("coverLetter", formData.coverLetter);
+    formDataObj.append("jobTitle", jobTitle);
+    if (resume) {
+      formDataObj.append("resume", resume);
+    }
+
     try {
-      // Load EmailJS dynamically
-      const emailjs = await import("@emailjs/browser");
-
-      // Initialize EmailJS with your public key
-      emailjs.default.init("btU7FXWcXJfbc2SVh");
-
-      // Convert file to base64 if resume exists
-      let resumeData = "";
-      if (resume) {
-        const reader = new FileReader();
-        resumeData = await new Promise((resolve) => {
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(resume);
-        });
-      }
-
-      // const templateParams = {
-      //   to_email: "hr@knitsolution.com", // Add recipient email
-      //   job_title: jobTitle,
-      //   from_name: formData.name,
-      //   from_email: formData.email,
-      //   phone: formData.phone,
-      //   experience: formData.experience || "Not specified",
-      //   message: formData.coverLetter || "No cover letter provided",
-      //   resume_name: resume ? resume.name : "No resume uploaded",
-      //   submission_date: new Date().toLocaleDateString(),
-      //   submission_time: new Date().toLocaleTimeString(),
-      // };
-      const templateParams = {
-        jobTitle: jobTitle,
-        from_name: formData.name, // matches {{from_name}}
-        from_email: formData.email, // matches {{from_email}}
-        phone: formData.phone,
-        experience: formData.experience || "Not specified",
-        coverLetter: formData.coverLetter || "No cover letter provided",
-        resume_name: resume ? resume.name : "No resume uploaded",
-        submission_date: new Date().toLocaleDateString(),
-        submission_time: new Date().toLocaleTimeString(),
-      };
-
-      console.log("[v0] Sending email with params:", templateParams);
-
-      await emailjs.default.send(
-        "service_jpbjrmb",
-        "template_qj80tmj",
-        templateParams
-      );
-
-      console.log("[v0] Email sent successfully");
-      setIsSubmitted(true);
-      toast({
-        title: "Application Submitted!",
-        description: "We'll review your application and get back to you soon.",
+      const res = await fetch("http://localhost:5000/api/apply", {
+        method: "POST",
+        body: formDataObj,
       });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setIsSubmitted(true);
+        toast({
+          title: "Application Submitted!",
+          description:
+            "We'll review your application and get back to you soon.",
+        });
+      } else {
+        throw new Error(data.error || "Failed to submit application");
+      }
     } catch (error) {
-      console.error("[v0] EmailJS Error:", error);
+      console.error("Error:", error);
       toast({
         title: "Error",
-        description: `Failed to submit application: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }. Please check your EmailJS template configuration.`,
+        description: "Failed to submit application. Try again later.",
         variant: "destructive",
       });
     } finally {
