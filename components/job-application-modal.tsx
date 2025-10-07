@@ -80,7 +80,7 @@ export function JobApplicationModal({
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/apply", {
+      const res = await fetch("https://knit-o0bf.onrender.com/api/apply", {
         method: "POST",
         body: formDataObj,
       });
