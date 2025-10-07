@@ -35,7 +35,7 @@ export default function contact() {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch("https://knit-o0bf.onrender.com/api/contact", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
